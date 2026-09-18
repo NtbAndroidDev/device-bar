@@ -1,4 +1,4 @@
-# 🚀 MobileDevBar
+# 🚀 DeviceBar
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-macOS%2013%2B-blue?style=flat-square&logo=apple" alt="macOS" />
@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
-> **MobileDevBar** là ứng dụng Menu Bar native trên macOS được thiết kế đặc biệt cho Mobile Developer (iOS & Android), hợp nhất việc quản lý iOS Simulators, Android AVD, Thiết bị vật lý (USB/Wi-Fi), Chiếu màn hình tốc độ cao (scrcpy) và Tự động dọn dẹp Build Cache hàng chục GB chỉ với 1 cú click chuột.
+> **DeviceBar** là ứng dụng Menu Bar native trên macOS được thiết kế đặc biệt cho Mobile Developer (iOS & Android), hợp nhất việc quản lý iOS Simulators, Android AVD, Thiết bị vật lý (USB/Wi-Fi), Chiếu màn hình tốc độ cao (scrcpy) và Tự động dọn dẹp Build Cache hàng chục GB chỉ với 1 cú click chuột.
 
 ---
 
@@ -102,17 +102,17 @@
 ### Biên Dịch Từ Mã Nguồn (Build from Source)
 ```bash
 # Clone repository
-git clone https://github.com/your-repo/MobileDevBar.git
-cd MobileDevBar
+git clone https://github.com/your-repo/DeviceBar.git
+cd DeviceBar
 
 # Biên dịch Release và đóng gói thành App Bundle
 ./build_app.sh
 
 # Cài đặt vào thư mục Ứng Dụng của Mac
-cp -R "MobileDevBar.app" /Applications/
+cp -R "DeviceBar.app" /Applications/
 
 # Khởi chạy ứng dụng
-open /Applications/MobileDevBar.app
+open /Applications/DeviceBar.app
 ```
 
 ---

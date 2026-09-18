@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-APP_NAME="MobileDevBar"
+APP_NAME="DeviceBar"
 VERSION="1.1.0"
 DMG_NAME="${APP_NAME}-v${VERSION}.dmg"
 APP_BUNDLE="${APP_NAME}.app"

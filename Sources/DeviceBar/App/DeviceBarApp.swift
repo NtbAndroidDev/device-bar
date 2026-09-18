@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct MobileDevBarApp: App {
+struct DeviceBarApp: App {
     @StateObject private var viewModel = AppViewModel()
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 

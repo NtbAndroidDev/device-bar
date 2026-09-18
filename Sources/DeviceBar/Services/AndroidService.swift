@@ -235,7 +235,7 @@ public final class AndroidService {
         let targetDir: URL
         if saveToDesktop {
             let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
-            let folder = desktop.appendingPathComponent("MobileDevBar_Screenshots", isDirectory: true)
+            let folder = desktop.appendingPathComponent("DeviceBar_Screenshots", isDirectory: true)
             try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             targetDir = folder
         } else {
@@ -264,7 +264,7 @@ public final class AndroidService {
     public func startScreenRecord(serial: String, durationSeconds: Int = 10) async throws -> URL {
         let remotePath = "/sdcard/screenrec_\(Int(Date().timeIntervalSince1970)).mp4"
         let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
-        let folder = desktop.appendingPathComponent("MobileDevBar_Recordings", isDirectory: true)
+        let folder = desktop.appendingPathComponent("DeviceBar_Recordings", isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         let fileName = "android_record_\(serial.replacingOccurrences(of: ":", with: "_"))_\(Int(Date().timeIntervalSince1970)).mp4"
@@ -312,9 +312,9 @@ public final class AndroidService {
     }
 
     public func pushMediaFiles(serial: String, urls: [URL]) async throws {
-        _ = try await shell.run("adb -s \"\(serial)\" shell mkdir -p /sdcard/Pictures/MobileDevBar")
+        _ = try await shell.run("adb -s \"\(serial)\" shell mkdir -p /sdcard/Pictures/DeviceBar")
         for url in urls {
-            let dest = "/sdcard/Pictures/MobileDevBar/\(url.lastPathComponent)"
+            let dest = "/sdcard/Pictures/DeviceBar/\(url.lastPathComponent)"
             _ = try await shell.run("adb -s \"\(serial)\" push \"\(url.path)\" \"\(dest)\"")
             _ = try await shell.run("adb -s \"\(serial)\" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d \"file://\(dest)\" 2>/dev/null || true")
         }

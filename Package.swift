@@ -2,22 +2,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "MobileDevBar",
+    name: "DeviceBar",
     platforms: [
         .macOS(.v13)
     ],
     products: [
         .executable(
-            name: "MobileDevBar",
-            targets: ["MobileDevBar"]
+            name: "DeviceBar",
+            targets: ["DeviceBar"]
         )
     ],
     dependencies: [],
     targets: [
         .executableTarget(
-            name: "MobileDevBar",
+            name: "DeviceBar",
             dependencies: [],
-            path: "Sources/MobileDevBar"
+            path: "Sources/DeviceBar"
         )
     ]
 )

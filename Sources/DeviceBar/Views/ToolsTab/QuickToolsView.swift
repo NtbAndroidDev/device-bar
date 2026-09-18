@@ -250,13 +250,13 @@ public struct QuickToolsView: View {
                 mediaFolderButton(
                     title: "Screenshots",
                     icon: "photo.on.rectangle.angled",
-                    folderName: "MobileDevBar_Screenshots"
+                    folderName: "DeviceBar_Screenshots"
                 )
 
                 mediaFolderButton(
                     title: "Screen Recordings",
                     icon: "video.badge.waveform",
-                    folderName: "MobileDevBar_Recordings"
+                    folderName: "DeviceBar_Recordings"
                 )
             }
         }

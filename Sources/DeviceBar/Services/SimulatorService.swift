@@ -119,7 +119,7 @@ public final class SimulatorService {
         let targetDir: URL
         if saveToDesktop {
             let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
-            let folder = desktop.appendingPathComponent("MobileDevBar_Screenshots", isDirectory: true)
+            let folder = desktop.appendingPathComponent("DeviceBar_Screenshots", isDirectory: true)
             try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             targetDir = folder
         } else {
@@ -147,7 +147,7 @@ public final class SimulatorService {
     // MARK: - Video Recording
     public func recordVideo(udid: String, durationSeconds: Int = 10) async throws -> URL {
         let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
-        let folder = desktop.appendingPathComponent("MobileDevBar_Recordings", isDirectory: true)
+        let folder = desktop.appendingPathComponent("DeviceBar_Recordings", isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         let fileName = "sim_record_\(Int(Date().timeIntervalSince1970)).mp4"
@@ -241,7 +241,7 @@ public final class SimulatorService {
             "Simulator Target Bundle": "\(bundleId)",
             "aps": {
                 "alert": {
-                    "title": "MobileDevBar Test 🚀",
+                    "title": "DeviceBar Test 🚀",
                     "body": "Đã bắn Push Notification thử nghiệm thành công lên iOS Simulator!"
                 },
                 "sound": "default",

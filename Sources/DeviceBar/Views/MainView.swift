@@ -120,7 +120,7 @@ public struct MainView: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
-                    Text("MobileDevBar")
+                    Text("DeviceBar")
                         .font(.system(size: 13.5, weight: .bold, design: .rounded))
 
                     if viewModel.bootedSimulatorsCount > 0 {
@@ -171,9 +171,9 @@ public struct MainView: View {
 
                 Button("Cài đặt vào /Applications") {
                     Task {
-                        let sourcePath = "/Users/Shared/Data/source/macos/MobileDevBar/MobileDevBar.app"
+                        let sourcePath = "/Users/Shared/Data/source/macos/MobileDevBar/DeviceBar.app"
                         _ = try? await ShellService.shared.run("cp -R \"\(sourcePath)\" /Applications/")
-                        viewModel.showStatus("Đã cài đặt MobileDevBar vào thư mục /Applications!")
+                        viewModel.showStatus("Đã cài đặt DeviceBar vào thư mục /Applications!")
                     }
                 }
 
@@ -186,7 +186,7 @@ public struct MainView: View {
                 Button(role: .destructive) {
                     NSApplication.shared.terminate(nil)
                 } label: {
-                    Label("Thoát MobileDevBar", systemImage: "power")
+                    Label("Thoát DeviceBar", systemImage: "power")
                 }
             } label: {
                 Image(systemName: "gearshape")
@@ -198,7 +198,7 @@ public struct MainView: View {
             }
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
-            .help("Cài đặt & Tùy chọn MobileDevBar")
+            .help("Cài đặt & Tùy chọn DeviceBar")
         }
         .padding(.horizontal, 14)
         .padding(.top, 12)
