@@ -7,115 +7,141 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
-> **DeviceBar** là ứng dụng Menu Bar native trên macOS được thiết kế đặc biệt cho Mobile Developer (iOS & Android), hợp nhất việc quản lý iOS Simulators, Android AVD, Thiết bị vật lý (USB/Wi-Fi), Chiếu màn hình tốc độ cao (scrcpy) và Tự động dọn dẹp Build Cache hàng chục GB chỉ với 1 cú click chuột.
+> **DeviceBar** is a native macOS Menu Bar application tailored for mobile developers (iOS, Android, Flutter, React Native). It unifies iOS Simulator management, Android AVD controls, real device screen mirroring (`scrcpy`), real-time Network/API inspection with cURL generation, instant crash analysis, and one-click developer cache cleaning (DerivedData, Gradle, SPM).
 
 ---
 
-## ✨ Tính Năng Nổi Bật
+## ✨ Key Features
 
-### 1. 🍎 Quản lý iOS Simulator Nâng Cao
-* **Nhận diện chính xác theo thời gian thực:** Hiển thị tức thì trạng thái `Booted` (xanh phát sáng) và `Shutdown` của tất cả simulator iOS trên máy Mac.
-* **Tự động gom máy đang chạy lên đầu danh sách:** Máy ảo nào đang chạy sẽ tự động bay lên trên cùng để thao tác nhanh nhất.
-* **Thao tác nhanh 1 chạm:**
-  * Bật/Tắt Dark Mode hệ thống (`xcrun simctl ui appearance`).
-  * Giả lập **FaceID** thành công (Pass) hoặc thất bại (Fail).
-  * **Mock GPS:** Đặt vị trí giả lập tức thì (Hà Nội, TP.HCM, Cupertino, Tokyo, Singapore...).
-  * **Deep Link Opener:** Bắn URL scheme (`myapp://...`) thẳng vào app đang chạy trên máy ảo.
-  * **Chụp màn hình:** Cắt bo góc trong suốt không nền (`.alpha`) hoặc chữ nhật (`.ignored`), tự động sao chép vào Clipboard Mac hoặc lưu Desktop.
-  * **Quay video:** Quay video chuẩn `.mp4` 10 giây lưu vào thư mục Desktop.
-  * **[MỚI v1.1.0] Menu Tiện Ích Nâng Cao (Power Tools):**
-    * 🗂 **Mở App Sandbox Container:** Tự động mở đúng thư mục `Documents / Library` của app đang dev trong Finder để kiểm tra SQLite, Realm, cache file.
-    * 📁 **Mở thư mục Data gốc** của Simulator trong Finder.
-    * 🖼 **Thêm ảnh/video tuỳ chọn:** Chọn file ảnh/video bất kỳ từ Mac đẩy thẳng vào thư viện Photos của Simulator.
-    * 📦 **Cài đặt file `.app`:** Chọn file build `.app` để cài đặt trực tiếp không cần mở Xcode.
-    * 🔔 **Bắn Push Notification giả lập:** Gửi thông báo đẩy mẫu (`.apns`) lên màn hình Simulator để test push notification handler.
-    * 👋 **Lắc máy (Shake Gesture):** Kích hoạt menu dev của React Native / Flutter / Expo.
-    * 🔒 **Reset toàn bộ quyền riêng tư (Privacy):** Reset sạch quyền Camera, Photos, GPS, Push...
-    * 📋 **Đồng bộ Clipboard 2 chiều:** Paste Mac ➔ Simulator và Copy Simulator ➔ Mac.
-  * **Xác Nhận Wipe An Toàn:** Hộp thoại cảnh báo bảo vệ dữ liệu trước khi xoá sạch máy ảo.
+### 1. 🍎 Advanced iOS Simulator Management
+* **Real-time State Tracking:** Instantly monitors `Booted` and `Shutdown` simulators with automatic top-sorting for active devices.
+* **1-Click Quick Controls:**
+  * Toggle system **Dark Mode / Light Mode** (`xcrun simctl ui appearance`).
+  * Simulate **FaceID** authentication (`Match` or `Fail`).
+  * **Mock GPS Location:** Teleport instantly to Hanoi, HCMC, Cupertino, Tokyo, Singapore, San Francisco, London...
+  * **Deep Link Opener:** Dispatch URL schemes (`myapp://path/order?id=123`) directly into the running app.
+  * **Precision Screenshots:** Capture with transparent alpha mask (`.alpha`) or rectangular frame (`.ignored`), copied to Clipboard or saved to Desktop.
+  * **Video Recording:** Record 10s MP4 screen captures saved directly to Desktop.
+  * **Two-way Clipboard Sync:** Seamlessly paste clipboard text between Mac and Simulator.
+  * **Safe Wipe Confirmation:** Protected reset dialog before erasing simulator data.
+* **🛠 Developer Power Tools:**
+  * 🗂 **Open App Sandbox in Finder:** Jump straight into your app's `Documents / Library / Cache` directory to inspect SQLite databases, Realm files, and local caches.
+  * 📁 **Open Root Data Directory:** View the raw device container in Finder.
+  * 🖼 **Push Custom Media:** Pick any image or video from your Mac and insert it into the Simulator Photos library.
+  * 📦 **Install `.app` Bundles:** Pick and deploy `.app` builds with one click.
+  * 🔔 **Simulate Push Notifications:** Dispatch test `.apns` payloads directly onto the Simulator screen.
+  * 👋 **Shake Gesture:** Trigger in-app developer menus (React Native, Expo, Flutter).
+  * 🔒 **Reset Privacy Permissions:** Clear Camera, Photos, Location, and Push permissions in one tap.
 
 ---
 
-### 2. 🤖 Quản lý Android AVD Chuyên Nghiệp
-* **Xác thực AVD thật 100%:** Lấy chính xác tên máy AVD thực tế đang liên kết với cổng `emulator-xxxx`.
-* **Khởi động nâng cao:** Hỗ trợ **Cold Boot** (`-no-snapshot-load`) và **Wipe Data** (`-wipe-data`).
+### 2. 🤖 Android AVD & Emulator Control
+* **Accurate AVD Detection:** Reliably resolves emulator port mapping (`emulator-xxxx`) to the real AVD configuration name.
+* **Power Lifecycle:**
+  * Standard Boot, **Cold Boot** (`-no-snapshot-load`), and **Protected Wipe Data** (`-wipe-data`).
 * **Android Quick Tweaks:**
-  * Bật/Tắt Dark Mode (`cmd uimode night yes/no`).
-  * **Show Touches:** Bật/Tắt hiển thị vòng tròn chạm màn hình khi demo hoặc quay video.
-  * Mở nhanh màn hình **Developer Settings** của Android.
-  * Mock vị trí GPS và bắn Deep Link Android (`am start -a android.intent.action.VIEW`).
-  * Chụp ảnh màn hình trực tiếp vào Clipboard và quay video AVD.
-  * **[MỚI v1.1.0] Menu Tiện Ích Android (Power Tools):**
-    * 📦 **Cài đặt file APK:** Chọn file `.apk` trên Mac cài đặt tức thời (`adb install -r`).
-    * 🖼 **Gửi ảnh/video vào Gallery:** Đẩy file vào `/sdcard/Pictures/` và quét media tự động.
-    * 🧹 **Xoá sạch Data & Cache App:** Xoá data app ngay lập tức (`adb shell pm clear`).
-    * 🕹 **Phím ảo & Dev Menu:** Kích hoạt Developer Menu và phím cứng Home / Back ảo.
-  * **Xác Nhận Wipe An Toàn:** Cảnh báo trước khi Wipe Data AVD.
+  * Toggle **Dark Theme** (`cmd uimode night yes/no`).
+  * **Show Touches:** Visual pointer feedback for screen recordings and client demos.
+  * Direct shortcut to Android **Developer Settings**.
+  * Mock GPS Coordinates and Deep Link Dispatcher (`am start -a ...`).
+  * Chained screenshot capture and video recording.
+* **🛠 Android Power Tools:**
+  * 📦 **Install APK:** Install any local `.apk` file via `adb install -r`.
+  * 🖼 **Send Media to Gallery:** Push photos/videos to `/sdcard/Pictures/` and automatically trigger media scanner broadcasts.
+  * 🧹 **Clear App Data & Cache:** Purge application state in seconds (`adb shell pm clear`).
+  * 🕹 **Virtual Keys & Dev Menu:** Home, Back, and Dev Menu keycodes (`keyevent 82`).
 
 ---
 
-### 3. 📱 Thiết Bị Thật & Chiếu Màn Hình (Physical Devices & Mirroring)
-* Tự động quét thiết bị cắm ngoài qua cổng USB hoặc mạng Wi-Fi.
-* Nhận diện đúng tên hãng và model phần cứng (Samsung, Xiaomi, Google Pixel, iPhone...).
-* **Chiếu màn hình siêu mượt (scrcpy):** Độ trễ cực thấp, hỗ trợ tương tác chuột và phím.
-* Chụp ảnh màn hình thiết bị thật vào Clipboard Mac và quay video.
-* **Wireless ADB:** Kích hoạt chế độ debug không dây qua Wi-Fi (port 5555) chỉ với 1 click.
+### 3. 🌐 Network & API Inspector (cURL & Markdown Export)
+* **Real-time Master-Detail Inspector:** Observe live API traffic from both iOS Simulators and Android Emulators without modifying client code.
+* **Automatic Protocol Parsing:** Compatible with **OkHttp, Retrofit, Dio (Flutter), URLSession, Axios**.
+* **Smart Filter:** 
+  * Instant toggle for 🔴 **Errors Only (4xx, 5xx, Failed)**.
+  * Real-time search filter by endpoint, URL, or method.
+* **Instant cURL Generation:**
+  * **`[ Copy as cURL ]`** button generates full, reproducible `curl -X ...` commands with headers and body for Postman or Terminal testing.
+* **Interactive Inspection:**
+  * Pretty-printed JSON formatted Request / Response bodies with syntax coloring.
+  * Detailed request/response headers and latency metrics.
+* **📊 Markdown (.md) Export:**
+  * Export the entire API call history into clean GitHub-flavored Markdown reports with summary tables, cURL blocks, and payloads.
+  * One-click copy Markdown directly to Clipboard for Jira, Slack, or GitHub issues.
 
 ---
 
-### 4. 🧹 Smart Developer Storage Cleaner (Giải phóng 100GB Cache)
-* **Đo dung lượng theo thời gian thực:**
+### 4. 🐞 Crash Detective (Instant Crash Catcher)
+* **One-Click Error Catching:** Caught by surprise when an app suddenly crashes? Click **Crash Detective** in the Tools menu.
+* **Accurate Extraction:**
+  * **Android:** Parses `AndroidRuntime: FATAL EXCEPTION` to pinpoint NullPointerException, OutOfMemory, or unhandled runtime errors.
+  * **iOS:** Reads the latest crash logs from `~/Library/Logs/DiagnosticReports/`.
+* **Actionable Output:** Displays Exception Type, file, crashing line, and full Stack Trace with a 1-click **Copy Stack Trace** button.
+
+---
+
+### 5. 📱 Physical Devices & Screen Mirroring
+* Automatically detects real hardware devices connected via USB or Wi-Fi.
+* Displays manufacturer brand and exact hardware model names.
+* **Ultra-low latency Screen Mirroring:** One-click launch via `scrcpy`.
+* **Wireless ADB:** Switch to wireless debugging over Wi-Fi (port 5555) with a single tap.
+
+---
+
+### 6. 🧹 Smart Developer Storage Cleaner
+* **Real-time Cache Analyzer:**
   * Xcode DerivedData (`~/Library/Developer/Xcode/DerivedData`)
   * Android Gradle Caches (`~/.gradle/caches`)
-  * Swift PM & CocoaPods Cache
-  * iOS DeviceSupport Symbols cũ (Symbols máy thật)
+  * Swift Package Manager & CocoaPods Cache
+  * iOS DeviceSupport Symbols
   * Simulator Logs & Caches
-  * Xcode Archives cũ
-* **Nhãn an toàn trực quan:**
-  * 🟢 **`100% Safe`:** An toàn tuyệt đối, không bao giờ mất code, Xcode/Gradle tự động sinh lại khi build.
-  * 🟡 **`Selective`:** Cho phép xem lại các bản build phát hành trong Finder trước khi xoá.
-* **Nút "Dọn sạch 1-Click":** Dọn dẹp sạch sẽ toàn bộ 5 danh mục an toàn cùng lúc, giải phóng ngay hàng chục GB ổ cứng.
+  * Xcode Archives
+* **1-Click Clean All Safe:** Reclaims tens of gigabytes of disk space safely with one button press.
 
 ---
 
-### 5. 🎨 Giao Diện Native macOS Đẳng Cấp
-* **App Icon 3D Squircle:** Render sắc nét theo ngôn ngữ thiết kế của macOS Sequoia.
-* **Menu Bar Extra thuần túy:** Ẩn hoàn toàn khỏi Dock (`LSUIElement = true`), không làm phiền không gian làm việc.
-* **Số lượng máy ảo động:** Hiển thị trực tiếp số lượng máy ảo đang bật ngay trên status bar (ví dụ: icon kèm số `1`).
-* **Khởi động cùng máy Mac (Launch at Login):** Tích hợp công tắc bật/tắt trong menu Cài đặt (⚙️).
-* **Phím tắt toàn cục cực nhanh:**
-  * <kbd>⌘1</kbd>: Tab Simulators & AVD
-  * <kbd>⌘2</kbd>: Tab Devices & Mirroring
-  * <kbd>⌘3</kbd>: Tab Quick Tools (Dọn Cache & LAN IP)
-  * <kbd>⌘F</kbd>: Tìm kiếm nhanh thiết bị
-  * <kbd>⌘R</kbd>: Làm mới danh sách thiết bị
+### 7. ⌨️ macOS Native Experience & Shortcuts
+* Built with 100% native SwiftUI and AppKit.
+* Runs purely in the Menu Bar (`LSUIElement = true`) with zero Dock clutter.
+* Dynamic menu bar badge displaying active booted device count.
+* **Global Keyboard Shortcuts:**
+  * <kbd>⌘1</kbd>: Simulators & AVD Tab
+  * <kbd>⌘2</kbd>: Physical Devices & Mirroring Tab
+  * <kbd>⌘3</kbd>: Quick Tools & Storage Cleaner Tab
+  * <kbd>⌘F</kbd>: Quick Search Filter
+  * <kbd>⌘R</kbd>: Refresh System State
 
 ---
 
-## 🛠 Hướng Dẫn Cài Đặt & Biên Dịch
+## 🛠 Installation & Building
 
-### Yêu Cầu Hệ Thống
-* macOS 13.0 (Ventura) trở lên.
+### Requirements
+* macOS 13.0 (Ventura) or later.
 * Xcode Command Line Tools (`xcode-select --install`).
-* *(Tùy chọn cho tính năng chiếu màn hình):* `brew install scrcpy`
+* *(Optional for screen mirroring):* `brew install scrcpy`
 
-### Biên Dịch Từ Mã Nguồn (Build from Source)
+### Build from Source
 ```bash
-# Clone repository
-git clone https://github.com/your-repo/DeviceBar.git
-cd DeviceBar
+# Clone the repository
+git clone git@github.com:NtbAndroidDev/device-bar.git
+cd device-bar
 
-# Biên dịch Release và đóng gói thành App Bundle
+# Compile Release build and package macOS App Bundle
 ./build_app.sh
 
-# Cài đặt vào thư mục Ứng Dụng của Mac
+# Install into /Applications
 cp -R "DeviceBar.app" /Applications/
 
-# Khởi chạy ứng dụng
+# Launch application
 open /Applications/DeviceBar.app
+```
+
+### Package into `.dmg` Installer
+```bash
+# Generates a standalone DeviceBar-v1.1.0.dmg installer
+./create_dmg.sh
 ```
 
 ---
 
-## 📄 Bản Quyền
-Dự án được phát hành theo giấy phép [MIT License](LICENSE).
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).

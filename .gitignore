@@ -10,7 +10,8 @@ Package.pins
 *.swp
 *~
 
-# App Bundle output (can be regenerated with ./build_app.sh)
-MobileDevBar.app/
+# App Bundle & Release artifacts (regenerated via ./build_app.sh and ./create_dmg.sh)
+*.app/
 *.dmg
 *.zip
+.dmg_staging/
