@@ -11,7 +11,7 @@ public final class DebugWindowManager {
     private init() {}
     
     // MARK: - Network Inspector Window
-    public func openNetworkInspector(deviceName: String, serial: String, isAndroid: Bool) {
+    public func openNetworkInspector(deviceName: String = "Device", serial: String = "default", isAndroid: Bool = false) {
         let windowKey = "network-\(serial)"
         
         if let controller = networkWindows[windowKey], let window = controller.window {
@@ -53,7 +53,7 @@ public final class DebugWindowManager {
     }
     
     // MARK: - Crash Inspector Window
-    public func openCrashInspector(deviceName: String, serial: String, isAndroid: Bool) {
+    public func openCrashInspector(deviceName: String = "Device", serial: String = "default", isAndroid: Bool = false) {
         let windowKey = "crash-\(serial)"
         
         if let controller = crashWindows[windowKey], let window = controller.window {

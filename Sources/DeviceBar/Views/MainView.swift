@@ -4,13 +4,13 @@ import AppKit
 @MainActor
 public struct MainView: View {
     @ObservedObject public var viewModel: AppViewModel
+    @ObservedObject private var langManager = LanguageManager.shared
     @State private var refreshRotation: Double = 0
     @FocusState private var isSearchFocused: Bool
 
     public init(viewModel: AppViewModel) {
         self.viewModel = viewModel
     }
-
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -42,6 +42,8 @@ public struct MainView: View {
                     PhysicalDevicesView(viewModel: viewModel)
                 case .tools:
                     QuickToolsView(viewModel: viewModel)
+                case .settings:
+                    SettingsView(viewModel: viewModel)
                 }
             }
             .frame(maxHeight: .infinity)
@@ -83,6 +85,13 @@ public struct MainView: View {
                     .keyboardShortcut("3", modifiers: .command)
 
                     Button("") {
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
+                            viewModel.selectedTab = .settings
+                        }
+                    }
+                    .keyboardShortcut("4", modifiers: .command)
+
+                    Button("") {
                         isSearchFocused = true
                     }
                     .keyboardShortcut("f", modifiers: .command)
@@ -100,7 +109,6 @@ public struct MainView: View {
                 .allowsHitTesting(false)
             }
         )
-
     }
 
     // MARK: - Header
@@ -120,7 +128,7 @@ public struct MainView: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
-                    Text("DeviceBar")
+                    Text(loc("app_title"))
                         .font(.system(size: 13.5, weight: .bold, design: .rounded))
 
                     if viewModel.bootedSimulatorsCount > 0 {
@@ -128,7 +136,7 @@ public struct MainView: View {
                             Circle()
                                 .fill(Color(hex: "10B981"))
                                 .frame(width: 5, height: 5)
-                            Text("\(viewModel.bootedSimulatorsCount) Booted")
+                            Text("\(viewModel.bootedSimulatorsCount) \(loc("booted"))")
                                 .font(.system(size: 9.5, weight: .bold, design: .rounded))
                                 .foregroundColor(Color(hex: "10B981"))
                         }
@@ -158,47 +166,23 @@ public struct MainView: View {
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
-            .help("Làm mới danh sách thiết bị")
+            .help(loc("refresh_tooltip"))
 
-            // Settings & Preferences Menu
-            Menu {
-                Toggle("Khởi động cùng máy Mac", isOn: Binding(
-                    get: { viewModel.isLaunchAtLogin },
-                    set: { _ in viewModel.toggleLaunchAtLogin() }
-                ))
-
-                Divider()
-
-                Button("Cài đặt vào /Applications") {
-                    Task {
-                        let sourcePath = "/Users/Shared/Data/source/macos/MobileDevBar/DeviceBar.app"
-                        _ = try? await ShellService.shared.run("cp -R \"\(sourcePath)\" /Applications/")
-                        viewModel.showStatus("Đã cài đặt DeviceBar vào thư mục /Applications!")
-                    }
-                }
-
-                Button("Mở thư mục /Applications") {
-                    NSWorkspace.shared.open(URL(fileURLWithPath: "/Applications"))
-                }
-
-                Divider()
-
-                Button(role: .destructive) {
-                    NSApplication.shared.terminate(nil)
-                } label: {
-                    Label("Thoát DeviceBar", systemImage: "power")
+            // Settings Tab Button
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                    viewModel.selectedTab = (viewModel.selectedTab == .settings) ? .simulators : .settings
                 }
             } label: {
-                Image(systemName: "gearshape")
+                Image(systemName: viewModel.selectedTab == .settings ? "gearshape.fill" : "gearshape")
                     .font(.system(size: 11.5, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(viewModel.selectedTab == .settings ? Color(hex: "3B82F6") : .secondary)
                     .padding(6)
-                    .background(Color.primary.opacity(0.04))
+                    .background(viewModel.selectedTab == .settings ? Color(hex: "3B82F6").opacity(0.12) : Color.primary.opacity(0.04))
                     .clipShape(Circle())
             }
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .help("Cài đặt & Tùy chọn DeviceBar")
+            .buttonStyle(.plain)
+            .help(loc("settings_tooltip"))
         }
         .padding(.horizontal, 14)
         .padding(.top, 12)
@@ -215,12 +199,14 @@ public struct MainView: View {
                         viewModel.selectedTab = tab
                     }
                 } label: {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 4) {
                         Image(systemName: tab.icon)
-                            .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                            .font(.system(size: 10.5, weight: isSelected ? .semibold : .regular))
 
-                        Text(tab.rawValue)
-                            .font(.system(size: 11.5, weight: isSelected ? .semibold : .medium, design: .rounded))
+                        Text(tab.localizedTitle)
+                            .font(.system(size: 10.5, weight: isSelected ? .semibold : .medium, design: .rounded))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
                     }
                     .foregroundColor(isSelected ? .white : .secondary)
                     .frame(maxWidth: .infinity)
@@ -259,7 +245,7 @@ public struct MainView: View {
                     .foregroundColor(isSearchFocused ? Color(hex: "3B82F6") : .secondary)
                     .font(.system(size: 11.5))
 
-                TextField("Tìm máy ảo theo tên, iOS / API version...", text: $viewModel.searchText)
+                TextField(loc("search_placeholder"), text: $viewModel.searchText)
                     .focused($isSearchFocused)
                     .textFieldStyle(.plain)
                     .font(.system(size: 11.5))
@@ -286,8 +272,7 @@ public struct MainView: View {
                     )
             )
 
-
-            // Pill Filter Toggle: "Đang chạy"
+            // Pill Filter Toggle: "Booted"
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     viewModel.filterBootedOnly.toggle()
@@ -297,7 +282,7 @@ public struct MainView: View {
                     Circle()
                         .fill(viewModel.filterBootedOnly ? Color(hex: "10B981") : Color.secondary.opacity(0.4))
                         .frame(width: 6, height: 6)
-                    Text("Đang chạy")
+                    Text(loc("filter_booted_only"))
                         .font(.system(size: 10.5, weight: viewModel.filterBootedOnly ? .semibold : .medium, design: .rounded))
                         .foregroundColor(viewModel.filterBootedOnly ? Color(hex: "10B981") : .secondary)
                 }
@@ -313,7 +298,7 @@ public struct MainView: View {
                 )
             }
             .buttonStyle(.plain)
-            .help("Chỉ lọc các máy ảo đang chạy")
+            .help(loc("filter_booted_tooltip"))
         }
     }
 
@@ -337,7 +322,7 @@ public struct MainView: View {
                     Circle()
                         .fill(Color(hex: "10B981"))
                         .frame(width: 5, height: 5)
-                    Text("Ready • Sẵn sàng điều khiển thiết bị")
+                    Text(loc("ready_status"))
                         .font(.system(size: 10.5, design: .rounded))
                         .foregroundColor(.secondary)
                 }
@@ -345,7 +330,7 @@ public struct MainView: View {
 
             Spacer()
 
-            Text("v1.1.0")
+            Text("v1.2.0")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(.secondary.opacity(0.6))
         }

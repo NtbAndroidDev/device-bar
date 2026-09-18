@@ -3,7 +3,8 @@ import AppKit
 
 public struct QuickToolsView: View {
     @ObservedObject public var viewModel: AppViewModel
-    @State private var localIP: String = "Đang kiểm tra..."
+    @ObservedObject private var langManager = LanguageManager.shared
+    @State private var localIP: String = "..."
     @State private var isCopiedIP: Bool = false
     @State private var isRestartingADB: Bool = false
     @State private var isCleaningAll: Bool = false
@@ -52,7 +53,7 @@ public struct QuickToolsView: View {
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(Color(hex: "3B82F6"))
 
-                Text("Địa Chỉ IP Nội Bộ (LAN IP)")
+                Text(loc("lan_ip_title"))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
 
                 Spacer()
@@ -76,7 +77,7 @@ public struct QuickToolsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(localIP)
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    Text("Dùng địa chỉ này để gọi backend từ điện thoại thật")
+                    Text(loc("lan_ip_subtitle"))
                         .font(.system(size: 9.5, design: .rounded))
                         .foregroundColor(.secondary)
                 }
@@ -98,7 +99,7 @@ public struct QuickToolsView: View {
                     HStack(spacing: 4) {
                         Image(systemName: isCopiedIP ? "checkmark" : "doc.on.doc")
                             .font(.system(size: 10, weight: .bold))
-                        Text(isCopiedIP ? "Đã copy!" : "Copy IP")
+                        Text(isCopiedIP ? loc("copied") : loc("copy"))
                             .font(.system(size: 11, weight: .medium, design: .rounded))
                     }
                     .foregroundColor(isCopiedIP ? Color(hex: "10B981") : .primary)
@@ -119,7 +120,7 @@ public struct QuickToolsView: View {
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(Color(hex: "F59E0B"))
 
-                Text("Dọn Dẹp Bộ Nhớ Developer (Storage Cleaner)")
+                Text(loc("storage_cleaner_title"))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
 
                 Spacer()
@@ -131,7 +132,7 @@ public struct QuickToolsView: View {
                     HStack(spacing: 3) {
                         Image(systemName: isCleaningAll ? "hourglass" : "sparkles")
                             .font(.system(size: 10, weight: .bold))
-                        Text(isCleaningAll ? "Đang dọn..." : "Dọn sạch 1-Click")
+                        Text(isCleaningAll ? loc("cleaning") : loc("clean_all"))
                             .font(.system(size: 10.5, weight: .bold, design: .rounded))
                     }
                     .foregroundColor(.white)
@@ -142,7 +143,7 @@ public struct QuickToolsView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCleaningAll)
-                .help("Tự động dọn toàn bộ các cache an toàn 100% (tự sinh lại khi build)")
+                .help(loc("storage_cleaner_subtitle"))
             }
 
             VStack(spacing: 7) {
@@ -242,7 +243,7 @@ public struct QuickToolsView: View {
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(Color(hex: "8B5CF6"))
 
-                Text("Thư Mục Xuất Media")
+                Text(loc("media_access_title"))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
             }
 
@@ -270,7 +271,7 @@ public struct QuickToolsView: View {
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(Color(hex: "F43F5E"))
 
-                Text("Lệnh Khẩn Cấp & Reset")
+                Text(langManager.currentLanguage == .vietnamese ? "Lệnh Khẩn Cấp & Reset" : "Emergency & Quick Reset")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
             }
 
@@ -282,14 +283,14 @@ public struct QuickToolsView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.triangle.2.circlepath")
                             .font(.system(size: 10, weight: .bold))
-                        Text(isRestartingADB ? "Đang reset..." : "Restart ADB")
+                        Text(isRestartingADB ? loc("restarting") : "Restart ADB")
                             .font(.system(size: 11, weight: .medium, design: .rounded))
                     }
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
                 .disabled(isRestartingADB)
-                .help("Khởi động lại adb daemon khi bị lỗi kết nối Android")
+                .help(loc("restart_adb_desc"))
 
                 Spacer()
 
@@ -300,7 +301,7 @@ public struct QuickToolsView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 10))
-                        Text("Tắt Simulators")
+                        Text(langManager.currentLanguage == .vietnamese ? "Tắt Simulators" : "Kill Simulators")
                             .font(.system(size: 10.5, design: .rounded))
                     }
                 }
@@ -314,7 +315,7 @@ public struct QuickToolsView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 10))
-                        Text("Tắt Emulators")
+                        Text(langManager.currentLanguage == .vietnamese ? "Tắt Emulators" : "Kill Emulators")
                             .font(.system(size: 10.5, design: .rounded))
                     }
                 }

@@ -25,16 +25,28 @@ public final class AppViewModel: ObservableObject {
     @Published public var customLatitude: String = "21.0285"
     @Published public var customLongitude: String = "105.8542"
 
+    @MainActor
     public enum Tab: String, CaseIterable {
         case simulators = "Simulators & AVD"
         case physicalDevices = "Devices & Mirroring"
         case tools = "Quick Tools"
+        case settings = "Settings"
+
+        public var localizedTitle: String {
+            switch self {
+            case .simulators: return loc("tab_simulators")
+            case .physicalDevices: return loc("tab_physical_devices")
+            case .tools: return loc("tab_tools")
+            case .settings: return loc("tab_settings")
+            }
+        }
 
         public var icon: String {
             switch self {
             case .simulators: return "macbook.and.iphone"
             case .physicalDevices: return "display.trianglebadge.exclamationmark"
             case .tools: return "wrench.and.screwdriver"
+            case .settings: return "gearshape"
             }
         }
     }
@@ -50,8 +62,21 @@ public final class AppViewModel: ObservableObject {
             await refreshAll()
         }
 
-        // Auto-refresh ngầm mỗi 2.5s để cập nhật chính xác theo thời gian thực
-        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+        let savedInterval = UserDefaults.standard.object(forKey: "auto_refresh_interval") as? Double ?? 3.0
+        updateRefreshTimer(interval: savedInterval)
+    }
+
+    public func updateRefreshInterval(_ interval: Double) {
+        updateRefreshTimer(interval: interval)
+    }
+
+    private func updateRefreshTimer(interval: Double) {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+
+        guard interval > 0 else { return }
+
+        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self = self, !self.isLoading else { return }
                 await self.refreshAllQuietly()
