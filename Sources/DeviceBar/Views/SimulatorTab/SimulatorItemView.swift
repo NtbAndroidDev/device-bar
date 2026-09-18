@@ -311,6 +311,28 @@ public struct SimulatorItemView: View {
 
                             // Advanced Tools Menu
                             Menu {
+                                Section("Debugging & API") {
+                                    Button {
+                                        DebugWindowManager.shared.openNetworkInspector(
+                                            deviceName: device.name,
+                                            serial: device.udid,
+                                            isAndroid: false
+                                        )
+                                    } label: {
+                                        Label("Network & API Inspector (cURL)", systemImage: "network")
+                                    }
+
+                                    Button {
+                                        DebugWindowManager.shared.openCrashInspector(
+                                            deviceName: device.name,
+                                            serial: device.udid,
+                                            isAndroid: false
+                                        )
+                                    } label: {
+                                        Label("Soi lỗi Crash văng app (Crash Detective)", systemImage: "ladybug.fill")
+                                    }
+                                }
+
                                 Section("Files & Sandbox") {
                                     Button("Mở thư mục Data trong Finder") {
                                         viewModel.openSimulatorDataFolder(device: device)

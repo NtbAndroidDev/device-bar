@@ -405,6 +405,30 @@ public struct AVDCardView: View {
 
                         // Android Power Tools Menu
                         Menu {
+                            Section("Debugging & API") {
+                                if let serial = avd.runningSerial {
+                                    Button {
+                                        DebugWindowManager.shared.openNetworkInspector(
+                                            deviceName: avd.name,
+                                            serial: serial,
+                                            isAndroid: true
+                                        )
+                                    } label: {
+                                        Label("Network & API Inspector (cURL)", systemImage: "network")
+                                    }
+
+                                    Button {
+                                        DebugWindowManager.shared.openCrashInspector(
+                                            deviceName: avd.name,
+                                            serial: serial,
+                                            isAndroid: true
+                                        )
+                                    } label: {
+                                        Label("Soi lỗi Crash văng app (Crash Detective)", systemImage: "ladybug.fill")
+                                    }
+                                }
+                            }
+
                             Section("App & Media") {
                                 Button("Cài đặt file APK...") {
                                     Task { await viewModel.pickAndInstallApkToAndroid(avd: avd) }
