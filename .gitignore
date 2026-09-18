@@ -1,0 +1,16 @@
+# Xcode & Swift Package Manager
+.build/
+Packages/
+Package.resolved
+Package.pins
+.swiftpm/
+
+# macOS system files
+.DS_Store
+*.swp
+*~
+
+# App Bundle output (can be regenerated with ./build_app.sh)
+MobileDevBar.app/
+*.dmg
+*.zip
