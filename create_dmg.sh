@@ -2,7 +2,7 @@
 set -e
 
 APP_NAME="DeviceBar"
-VERSION="1.1.0"
+VERSION="1.2.0"
 DMG_NAME="${APP_NAME}-v${VERSION}.dmg"
 APP_BUNDLE="${APP_NAME}.app"
 STAGING_DIR=".dmg_staging"

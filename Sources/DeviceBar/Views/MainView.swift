@@ -150,6 +150,26 @@ public struct MainView: View {
 
             Spacer()
 
+            // Quick Language Switch Button
+            Button {
+                let nextLang: AppLanguage = langManager.currentLanguage == .vietnamese ? .english : .vietnamese
+                langManager.setLanguage(nextLang)
+            } label: {
+                HStack(spacing: 3) {
+                    Text(langManager.currentLanguage.flag)
+                        .font(.system(size: 11))
+                    Text(langManager.currentLanguage == .vietnamese ? "VI" : "EN")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                }
+                .padding(.horizontal, 6)
+                .padding(.vertical, 3.5)
+                .background(Color.primary.opacity(0.06))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .help(langManager.currentLanguage == .vietnamese ? "Chuyển sang English" : "Switch to Tiếng Việt")
+
             // Refresh Button with smooth rotation
             Button {
                 withAnimation(.linear(duration: 0.8)) {
