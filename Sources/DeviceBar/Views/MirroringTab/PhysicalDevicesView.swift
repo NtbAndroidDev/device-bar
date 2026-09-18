@@ -215,7 +215,7 @@ private struct DeviceCardItem: View {
 
                     DeviceIconView(
                         type: device.platform == .android ? .android(name: device.name) : .ios(name: device.name),
-                        isOnline: true,
+                        isOnline: device.isOnline,
                         size: 16
                     )
                 }
@@ -244,7 +244,7 @@ private struct DeviceCardItem: View {
 
                 Spacer()
 
-                StatusBadge(isOnline: true, label: "Connected")
+                StatusBadge(isOnline: device.isOnline, label: device.isOnline ? "Connected" : "Offline")
             }
 
             Divider()
@@ -266,7 +266,8 @@ private struct DeviceCardItem: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
-                    .help("Chiếu màn hình điện thoại lên Mac bằng scrcpy")
+                    .disabled(!device.isOnline)
+                    .help(device.isOnline ? "Chiếu màn hình điện thoại lên Mac bằng scrcpy" : "Thiết bị đang ngắt kết nối")
                 }
 
                 // Screenshot Menu
@@ -287,6 +288,8 @@ private struct DeviceCardItem: View {
                 }
                 .menuStyle(.borderedButton)
                 .controlSize(.small)
+                .disabled(!device.isOnline)
+                .help(device.isOnline ? "Chụp màn hình thiết bị" : "Thiết bị đang ngắt kết nối (Offline)")
 
                 // Video Record Button
                 Button {
@@ -306,7 +309,7 @@ private struct DeviceCardItem: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
-                .disabled(isRecording)
+                .disabled(!device.isOnline || isRecording)
 
                 if device.platform == .android && device.connectionType == .usb {
                     // Wi-Fi ADB toggle
@@ -322,7 +325,8 @@ private struct DeviceCardItem: View {
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
-                    .help("Kích hoạt ADB qua mạng Wi-Fi để rút cáp ra vẫn debug được")
+                    .disabled(!device.isOnline)
+                    .help(device.isOnline ? "Kích hoạt ADB qua mạng Wi-Fi để rút cáp ra vẫn debug được" : "Thiết bị đang ngắt kết nối")
                 }
 
                 Spacer()

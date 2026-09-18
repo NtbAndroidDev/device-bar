@@ -138,41 +138,93 @@ public final class AndroidService {
             }
         } catch {}
 
-        // 2. iOS Physical Devices via xcrun xctrace (Chỉ lấy thiết bị Online)
-        do {
-            let iosOutput = try await shell.run("xcrun xctrace list devices 2>/dev/null || true")
-            let lines = iosOutput.components(separatedBy: .newlines)
-            var inPhysicalSection = false
-            for line in lines {
-                if line.contains("== Devices ==") {
-                    inPhysicalSection = true
-                    continue
-                } else if line.contains("== Devices Offline ==") || line.contains("== Simulators ==") {
-                    inPhysicalSection = false
-                    if line.contains("== Simulators ==") { break }
-                }
+        // 2. iOS Physical Devices via CoreDevice / xcrun devicectl (Xcode 15+ Native)
+        var foundIOSDeviceUDIDs = Set<String>()
+        if let devicectlOutput = try? await shell.run("xcrun devicectl list devices --json-output /dev/stdout 2>/dev/null") {
+            if let jsonStart = devicectlOutput.firstIndex(of: "{") {
+                let jsonSubstring = String(devicectlOutput[jsonStart...])
+                if let jsonData = jsonSubstring.data(using: .utf8),
+                   let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+                   let result = json["result"] as? [String: Any],
+                   let rawDevices = result["devices"] as? [[String: Any]] {
+                    for dev in rawDevices {
+                        let hardware = dev["hardwareProperties"] as? [String: Any] ?? [:]
+                        let reality = hardware["reality"] as? String ?? ""
+                        guard reality == "physical" else { continue }
 
-                if inPhysicalSection {
-                    let trimmed = line.trimmingCharacters(in: .whitespaces)
-                    guard !trimmed.isEmpty, trimmed.contains("(") else { continue }
-                    // Format: "B1nhhh (E88C3F1D-71E0-51EA-A4B7-298BE420894B)"
-                    if let startParen = trimmed.range(of: "(", options: .backwards),
-                       let endParen = trimmed.range(of: ")", options: .backwards) {
-                        let udid = String(trimmed[startParen.upperBound..<endParen.lowerBound])
-                        let name = String(trimmed[..<startParen.lowerBound]).trimmingCharacters(in: .whitespaces)
+                        let udid = (hardware["udid"] as? String) ?? (dev["identifier"] as? String) ?? ""
+                        guard !udid.isEmpty else { continue }
 
+                        let devProps = dev["deviceProperties"] as? [String: Any] ?? [:]
+                        let customName = devProps["name"] as? String ?? ""
+                        let marketingName = hardware["marketingName"] as? String ?? "iPhone"
+                        let osVersion = devProps["osVersionNumber"] as? String ?? ""
+
+                        let connProps = dev["connectionProperties"] as? [String: Any] ?? [:]
+                        let tunnelState = connProps["tunnelState"] as? String ?? ""
+                        let isOnline = tunnelState == "connected"
+
+                        let displayName = customName.isEmpty ? marketingName : "\(customName) (\(marketingName))"
+
+                        foundIOSDeviceUDIDs.insert(udid)
                         devices.append(ConnectedDevice(
                             id: udid,
-                            name: name,
+                            name: displayName,
                             serial: udid,
                             platform: .ios,
                             connectionType: .usb,
-                            model: name
+                            model: "\(marketingName) \(osVersion)".trimmingCharacters(in: .whitespaces),
+                            isOnline: isOnline
                         ))
                     }
                 }
             }
-        } catch {}
+        }
+
+        // Fallback to xctrace if devicectl found nothing
+        if foundIOSDeviceUDIDs.isEmpty {
+            let macHost = (try? await shell.run("scutil --get ComputerName 2>/dev/null"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if let iosOutput = try? await shell.run("xcrun xctrace list devices 2>/dev/null") {
+                let lines = iosOutput.components(separatedBy: .newlines)
+                var inPhysicalSection = false
+                for line in lines {
+                    if line.contains("== Devices ==") {
+                        inPhysicalSection = true
+                        continue
+                    } else if line.contains("== Devices Offline ==") || line.contains("== Simulators ==") {
+                        inPhysicalSection = false
+                        if line.contains("== Simulators ==") { break }
+                    }
+
+                    if inPhysicalSection {
+                        let trimmed = line.trimmingCharacters(in: .whitespaces)
+                        guard !trimmed.isEmpty, trimmed.contains("(") else { continue }
+                        if let startParen = trimmed.range(of: "(", options: .backwards),
+                           let endParen = trimmed.range(of: ")", options: .backwards) {
+                            let udid = String(trimmed[startParen.upperBound..<endParen.lowerBound])
+                            let name = String(trimmed[..<startParen.lowerBound]).trimmingCharacters(in: .whitespaces)
+
+                            // Bỏ qua Mac Host
+                            if !macHost.isEmpty && (name == macHost || name.starts(with: macHost)) {
+                                continue
+                            }
+
+                            if !foundIOSDeviceUDIDs.contains(udid) {
+                                foundIOSDeviceUDIDs.insert(udid)
+                                devices.append(ConnectedDevice(
+                                    id: udid,
+                                    name: name,
+                                    serial: udid,
+                                    platform: .ios,
+                                    connectionType: .usb,
+                                    model: name
+                                ))
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return devices
     }

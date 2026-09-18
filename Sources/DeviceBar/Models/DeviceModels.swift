@@ -59,6 +59,27 @@ public struct ConnectedDevice: Identifiable, Hashable {
     public let connectionType: ConnectionType
     public let model: String
     public var ipAddress: String?
+    public var isOnline: Bool
+
+    public init(
+        id: String,
+        name: String,
+        serial: String,
+        platform: Platform,
+        connectionType: ConnectionType,
+        model: String,
+        ipAddress: String? = nil,
+        isOnline: Bool = true
+    ) {
+        self.id = id
+        self.name = name
+        self.serial = serial
+        self.platform = platform
+        self.connectionType = connectionType
+        self.model = model
+        self.ipAddress = ipAddress
+        self.isOnline = isOnline
+    }
 
     public enum Platform: String, CaseIterable {
         case android = "Android"
