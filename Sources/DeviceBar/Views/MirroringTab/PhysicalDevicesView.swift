@@ -109,37 +109,75 @@ public struct PhysicalDevicesView: View {
                 Divider()
                     .opacity(0.4)
 
-                // Bottom Utilities Card (scrcpy helper)
-                HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(Color(hex: "3B82F6").opacity(0.12))
-                            .frame(width: 28, height: 28)
+                // Bottom Utilities Card (scrcpy & libimobiledevice helper)
+                VStack(spacing: 8) {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color(hex: "3B82F6").opacity(0.12))
+                                .frame(width: 28, height: 28)
 
-                        Image(systemName: "terminal.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "3B82F6"))
+                            Image(systemName: "terminal.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color(hex: "3B82F6"))
+                        }
+
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Android Screen Mirroring (scrcpy)")
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            Text("brew install scrcpy")
+                                .font(.system(size: 9.5, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString("brew install scrcpy", forType: .string)
+                            viewModel.showStatus("Đã copy lệnh 'brew install scrcpy' vào Clipboard!")
+                        } label: {
+                            Text("Copy")
+                                .font(.system(size: 10.5, weight: .medium, design: .rounded))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
                     }
 
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Cài đặt Screen Mirroring (scrcpy)")
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        Text("brew install scrcpy")
-                            .font(.system(size: 9.5, design: .monospaced))
-                            .foregroundColor(.secondary)
-                    }
+                    Divider().opacity(0.3)
 
-                    Spacer()
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color(hex: "10B981").opacity(0.12))
+                                .frame(width: 28, height: 28)
 
-                    Button {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString("brew install scrcpy", forType: .string)
-                    } label: {
-                        Text("Copy lệnh")
-                            .font(.system(size: 10.5, weight: .medium, design: .rounded))
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: "10B981"))
+                        }
+
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Chụp ảnh iPhone thật (idevicescreenshot)")
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            Text("brew install libimobiledevice")
+                                .font(.system(size: 9.5, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString("brew install libimobiledevice", forType: .string)
+                            viewModel.showStatus("Đã copy lệnh 'brew install libimobiledevice' vào Clipboard!")
+                        } label: {
+                            Text("Copy")
+                                .font(.system(size: 10.5, weight: .medium, design: .rounded))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
                 }
                 .padding(9)
                 .background(

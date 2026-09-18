@@ -144,6 +144,47 @@ public final class SimulatorService {
         return fileURL
     }
 
+    // MARK: - Physical iOS Device Screenshot (Real iPhone / iPad)
+    @MainActor
+    public func capturePhysicalIOSScreenshot(udid: String, saveToDesktop: Bool = false) async throws -> URL {
+        let hasIdevice = await shell.isCommandAvailable("idevicescreenshot")
+
+        guard hasIdevice else {
+            let isVN = LanguageManager.shared.currentLanguage == .vietnamese
+            let msg = isVN
+                ? "Chụp ảnh iPhone thật cần 'idevicescreenshot'. Chạy 'brew install libimobiledevice' trong Terminal (Đã copy lệnh vào Clipboard)."
+                : "Physical iPhone capture requires 'idevicescreenshot'. Run 'brew install libimobiledevice' in Terminal (Copied to Clipboard)."
+            throw NSError(domain: "DeviceBar", code: 404, userInfo: [NSLocalizedDescriptionKey: msg])
+        }
+
+        let targetDir: URL
+        if saveToDesktop {
+            let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
+            let folder = desktop.appendingPathComponent("DeviceBar_Screenshots", isDirectory: true)
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            targetDir = folder
+        } else {
+            targetDir = FileManager.default.temporaryDirectory
+        }
+
+        let fileName = "ios_hardware_\(Int(Date().timeIntervalSince1970)).png"
+        let fileURL = targetDir.appendingPathComponent(fileName)
+
+        _ = try await shell.run("idevicescreenshot -u \"\(udid)\" \"\(fileURL.path)\"")
+
+        if let image = NSImage(contentsOf: fileURL) {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.writeObjects([image])
+        }
+
+        if saveToDesktop {
+            NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+        }
+
+        return fileURL
+    }
+
     // MARK: - Video Recording
     public func recordVideo(udid: String, durationSeconds: Int = 10) async throws -> URL {
         let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory

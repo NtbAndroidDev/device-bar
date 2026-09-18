@@ -472,24 +472,33 @@ public final class AppViewModel: ObservableObject {
                 let fileURL = try await androidService.captureScreenshot(serial: device.serial, saveToDesktop: saveToDesktop)
                 showStatus("Đã chụp & copy vào Clipboard! (\(fileURL.lastPathComponent))")
             } else {
-                let fileURL = try await simService.captureScreenshot(udid: device.serial, mask: .alpha, saveToDesktop: saveToDesktop)
+                let fileURL = try await simService.capturePhysicalIOSScreenshot(udid: device.serial, saveToDesktop: saveToDesktop)
                 showStatus("Đã chụp & copy vào Clipboard! (\(fileURL.lastPathComponent))")
             }
         } catch {
             showError("Lỗi chụp ảnh: \(error.localizedDescription)")
+            if device.platform == .ios {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString("brew install libimobiledevice", forType: .string)
+            }
         }
     }
 
     public func recordDeviceVideo(device: ConnectedDevice, durationSeconds: Int = 10) async {
+        if device.platform == .ios {
+            let isVN = LanguageManager.shared.currentLanguage == .vietnamese
+            let msg = isVN
+                ? "Mở QuickTime Player > File > New Movie Recording để quay màn hình iPhone thật."
+                : "Open QuickTime Player > File > New Movie Recording to record physical iPhone."
+            showStatus(msg)
+            NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/QuickTime Player.app"))
+            return
+        }
+
         showStatus("Đang quay màn hình thiết bị \(durationSeconds)s...")
         do {
-            if device.platform == .android {
-                let fileURL = try await androidService.startScreenRecord(serial: device.serial, durationSeconds: durationSeconds)
-                showStatus("Đã lưu video vào Desktop! (\(fileURL.lastPathComponent))")
-            } else {
-                let fileURL = try await simService.recordVideo(udid: device.serial, durationSeconds: durationSeconds)
-                showStatus("Đã lưu video vào Desktop! (\(fileURL.lastPathComponent))")
-            }
+            let fileURL = try await androidService.startScreenRecord(serial: device.serial, durationSeconds: durationSeconds)
+            showStatus("Đã lưu video vào Desktop! (\(fileURL.lastPathComponent))")
         } catch {
             showError("Lỗi quay video: \(error.localizedDescription)")
         }
