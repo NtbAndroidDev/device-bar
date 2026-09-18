@@ -23,8 +23,16 @@
   * **Deep Link Opener:** Bắn URL scheme (`myapp://...`) thẳng vào app đang chạy trên máy ảo.
   * **Chụp màn hình:** Cắt bo góc trong suốt không nền (`.alpha`) hoặc chữ nhật (`.ignored`), tự động sao chép vào Clipboard Mac hoặc lưu Desktop.
   * **Quay video:** Quay video chuẩn `.mp4` 10 giây lưu vào thư mục Desktop.
-  * **Media & Clipboard:** Nạp ảnh mẫu vào Photos.app của Simulator, đồng bộ nội dung Clipboard giữa máy Mac và Simulator.
-  * **Wipe Data:** Xoá trắng dữ liệu máy ảo chỉ với 1 click.
+  * **[MỚI v1.1.0] Menu Tiện Ích Nâng Cao (Power Tools):**
+    * 🗂 **Mở App Sandbox Container:** Tự động mở đúng thư mục `Documents / Library` của app đang dev trong Finder để kiểm tra SQLite, Realm, cache file.
+    * 📁 **Mở thư mục Data gốc** của Simulator trong Finder.
+    * 🖼 **Thêm ảnh/video tuỳ chọn:** Chọn file ảnh/video bất kỳ từ Mac đẩy thẳng vào thư viện Photos của Simulator.
+    * 📦 **Cài đặt file `.app`:** Chọn file build `.app` để cài đặt trực tiếp không cần mở Xcode.
+    * 🔔 **Bắn Push Notification giả lập:** Gửi thông báo đẩy mẫu (`.apns`) lên màn hình Simulator để test push notification handler.
+    * 👋 **Lắc máy (Shake Gesture):** Kích hoạt menu dev của React Native / Flutter / Expo.
+    * 🔒 **Reset toàn bộ quyền riêng tư (Privacy):** Reset sạch quyền Camera, Photos, GPS, Push...
+    * 📋 **Đồng bộ Clipboard 2 chiều:** Paste Mac ➔ Simulator và Copy Simulator ➔ Mac.
+  * **Xác Nhận Wipe An Toàn:** Hộp thoại cảnh báo bảo vệ dữ liệu trước khi xoá sạch máy ảo.
 
 ---
 
@@ -36,8 +44,13 @@
   * **Show Touches:** Bật/Tắt hiển thị vòng tròn chạm màn hình khi demo hoặc quay video.
   * Mở nhanh màn hình **Developer Settings** của Android.
   * Mock vị trí GPS và bắn Deep Link Android (`am start -a android.intent.action.VIEW`).
-  * **Screen Mirroring:** Khởi chạy cửa sổ điều khiển máy ảo qua `scrcpy`.
   * Chụp ảnh màn hình trực tiếp vào Clipboard và quay video AVD.
+  * **[MỚI v1.1.0] Menu Tiện Ích Android (Power Tools):**
+    * 📦 **Cài đặt file APK:** Chọn file `.apk` trên Mac cài đặt tức thời (`adb install -r`).
+    * 🖼 **Gửi ảnh/video vào Gallery:** Đẩy file vào `/sdcard/Pictures/` và quét media tự động.
+    * 🧹 **Xoá sạch Data & Cache App:** Xoá data app ngay lập tức (`adb shell pm clear`).
+    * 🕹 **Phím ảo & Dev Menu:** Kích hoạt Developer Menu và phím cứng Home / Back ảo.
+  * **Xác Nhận Wipe An Toàn:** Cảnh báo trước khi Wipe Data AVD.
 
 ---
 

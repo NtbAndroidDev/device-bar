@@ -196,6 +196,63 @@ public final class SimulatorService {
         }
         _ = try await shell.run("xcrun simctl addmedia \"\(udid)\" \"\(tempImageURL.path)\"")
     }
+
+    public func addMediaFiles(udid: String, urls: [URL]) async throws {
+        let paths = urls.map { "\"\($0.path)\"" }.joined(separator: " ")
+        _ = try await shell.run("xcrun simctl addmedia \"\(udid)\" \(paths)")
+    }
+
+    // MARK: - Advanced Developer Tools
+    public func openSimulatorDataFolder(udid: String) {
+        let homeDir = FileManager.default.homeDirectoryForCurrentUser
+        let dataURL = homeDir.appendingPathComponent("Library/Developer/CoreSimulator/Devices/\(udid)/data")
+        if FileManager.default.fileExists(atPath: dataURL.path) {
+            NSWorkspace.shared.open(dataURL)
+        }
+    }
+
+    public func openAppContainer(udid: String, bundleId: String) async throws {
+        let trimmed = bundleId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let path = try await shell.run("xcrun simctl get_app_container \"\(udid)\" \"\(trimmed)\" data")
+        let cleanedPath = path.trimmingCharacters(in: .whitespacesAndNewlines)
+        if FileManager.default.fileExists(atPath: cleanedPath) {
+            NSWorkspace.shared.open(URL(fileURLWithPath: cleanedPath))
+        } else {
+            throw NSError(domain: "SimulatorService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Không tìm thấy thư mục của app '\(trimmed)'. Hãy chắc chắn app đã được cài trên Simulator."])
+        }
+    }
+
+    public func resetPrivacy(udid: String) async throws {
+        _ = try await shell.run("xcrun simctl privacy \"\(udid)\" reset all")
+    }
+
+    public func triggerShake(udid: String) async throws {
+        _ = try await shell.run("xcrun simctl spawn \"\(udid)\" notifyutil -p com.apple.UIKit.simulator.shake")
+    }
+
+    public func installApp(udid: String, fileURL: URL) async throws {
+        _ = try await shell.run("xcrun simctl install \"\(udid)\" \"\(fileURL.path)\"")
+    }
+
+    public func sendTestPush(udid: String, bundleId: String = "com.apple.Preferences") async throws {
+        let jsonContent = """
+        {
+            "Simulator Target Bundle": "\(bundleId)",
+            "aps": {
+                "alert": {
+                    "title": "MobileDevBar Test 🚀",
+                    "body": "Đã bắn Push Notification thử nghiệm thành công lên iOS Simulator!"
+                },
+                "sound": "default",
+                "badge": 1
+            }
+        }
+        """
+        let tempPushURL = FileManager.default.temporaryDirectory.appendingPathComponent("test_push_\(Int(Date().timeIntervalSince1970)).apns")
+        try jsonContent.write(to: tempPushURL, atomically: true, encoding: .utf8)
+        _ = try await shell.run("xcrun simctl push \"\(udid)\" \"\(bundleId)\" \"\(tempPushURL.path)\"")
+    }
 }
 
 

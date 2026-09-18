@@ -297,4 +297,32 @@ public final class AndroidService {
         let connectResult = try await shell.run("adb connect \(ip):5555")
         return "Kết nối thành công tới \(ip):5555: \(connectResult)"
     }
+
+    // MARK: - Advanced Developer Tools
+    public func triggerDevMenu(serial: String) async throws {
+        _ = try await shell.run("adb -s \"\(serial)\" shell input keyevent 82")
+    }
+
+    public func pressKey(serial: String, keyCode: Int) async throws {
+        _ = try await shell.run("adb -s \"\(serial)\" shell input keyevent \(keyCode)")
+    }
+
+    public func installApk(serial: String, fileURL: URL) async throws {
+        _ = try await shell.run("adb -s \"\(serial)\" install -r \"\(fileURL.path)\"")
+    }
+
+    public func pushMediaFiles(serial: String, urls: [URL]) async throws {
+        _ = try await shell.run("adb -s \"\(serial)\" shell mkdir -p /sdcard/Pictures/MobileDevBar")
+        for url in urls {
+            let dest = "/sdcard/Pictures/MobileDevBar/\(url.lastPathComponent)"
+            _ = try await shell.run("adb -s \"\(serial)\" push \"\(url.path)\" \"\(dest)\"")
+            _ = try await shell.run("adb -s \"\(serial)\" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d \"file://\(dest)\" 2>/dev/null || true")
+        }
+    }
+
+    public func clearAppData(serial: String, packageName: String) async throws {
+        let trimmed = packageName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        _ = try await shell.run("adb -s \"\(serial)\" shell pm clear \"\(trimmed)\"")
+    }
 }

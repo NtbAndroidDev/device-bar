@@ -309,27 +309,63 @@ public struct SimulatorItemView: View {
                             .controlSize(.small)
                             .disabled(isRecordingVideo)
 
-                            // Quick Media & Clipboard Menu
+                            // Advanced Tools Menu
                             Menu {
-                                Button("Thêm ảnh mẫu vào Photos.app") {
-                                    Task { await viewModel.addSamplePhoto(device: device) }
+                                Section("Files & Sandbox") {
+                                    Button("Mở thư mục Data trong Finder") {
+                                        viewModel.openSimulatorDataFolder(device: device)
+                                    }
+                                    Button("Mở Sandbox App (Documents/Cache)...") {
+                                        viewModel.promptAndOpenAppContainer(device: device)
+                                    }
+                                    Button("Thêm ảnh/video từ Mac...") {
+                                        Task { await viewModel.pickAndAddMediaToSimulator(device: device) }
+                                    }
+                                    Button("Thêm ảnh mẫu Gradient vào Photos") {
+                                        Task { await viewModel.addSamplePhoto(device: device) }
+                                    }
+                                    Button("Cài đặt file .app vào Simulator...") {
+                                        Task { await viewModel.pickAndInstallAppToSimulator(device: device) }
+                                    }
                                 }
-                                Button("Paste Clipboard Mac sang Simulator") {
-                                    Task { await viewModel.syncClipboard(device: device) }
+
+                                Section("Testing & Controls") {
+                                    Button("Bắn Push Notification test...") {
+                                        viewModel.promptAndSendTestPush(device: device)
+                                    }
+                                    Button("Lắc máy (Shake / Mở Dev Menu)") {
+                                        Task { await viewModel.triggerSimulatorShake(device: device) }
+                                    }
+                                    Button("Reset toàn bộ quyền riêng tư (Privacy)") {
+                                        Task { await viewModel.resetSimulatorPrivacy(device: device) }
+                                    }
+                                }
+
+                                Section("Clipboard") {
+                                    Button("Paste Clipboard Mac sang Simulator") {
+                                        Task { await viewModel.syncClipboard(device: device) }
+                                    }
+                                    Button("Copy Clipboard Simulator về Mac") {
+                                        Task { await viewModel.syncClipboardFromSimulator(device: device) }
+                                    }
                                 }
                             } label: {
-                                Image(systemName: "ellipsis.circle")
-                                    .font(.system(size: 11))
+                                HStack(spacing: 3) {
+                                    Image(systemName: "wrench.and.screwdriver.fill")
+                                        .font(.system(size: 9.5))
+                                    Text("Tiện ích")
+                                        .font(.system(size: 10.5, weight: .medium, design: .rounded))
+                                }
                             }
                             .menuStyle(.borderedButton)
                             .controlSize(.small)
-                            .help("Tiện ích thêm ảnh và đồng bộ Clipboard")
+                            .help("Tiện ích nâng cao: Sandbox, Push Test, Shake, Cài App, Thêm ảnh")
 
                             Spacer()
 
                             // Wipe Data
                             Button(role: .destructive) {
-                                Task { await viewModel.eraseSimulator(device) }
+                                viewModel.promptAndEraseSimulator(device)
                             } label: {
                                 Label("Wipe", systemImage: "trash")
                                     .font(.system(size: 10.5, design: .rounded))
@@ -352,7 +388,7 @@ public struct SimulatorItemView: View {
                             Spacer()
 
                             Button(role: .destructive) {
-                                Task { await viewModel.eraseSimulator(device) }
+                                viewModel.promptAndEraseSimulator(device)
                             } label: {
                                 Label("Wipe Data", systemImage: "trash")
                                     .font(.system(size: 10.5, design: .rounded))

@@ -182,7 +182,7 @@ public struct AVDCardView: View {
                     .help("Khởi động không tải snapshot")
 
                     Button(role: .destructive) {
-                        Task { await viewModel.startAVD(avd, wipeData: true) }
+                        viewModel.promptAndWipeAVD(avd)
                     } label: {
                         HStack(spacing: 3) {
                             Image(systemName: "trash")
@@ -402,6 +402,43 @@ public struct AVDCardView: View {
                         .buttonStyle(.bordered)
                         .controlSize(.small)
                         .disabled(isRecording)
+
+                        // Android Power Tools Menu
+                        Menu {
+                            Section("App & Media") {
+                                Button("Cài đặt file APK...") {
+                                    Task { await viewModel.pickAndInstallApkToAndroid(avd: avd) }
+                                }
+                                Button("Gửi ảnh/video vào Gallery...") {
+                                    Task { await viewModel.pickAndPushMediaToAndroid(avd: avd) }
+                                }
+                                Button("Xoá sạch Data & Cache của App...") {
+                                    viewModel.promptAndClearAppData(avd: avd)
+                                }
+                            }
+
+                            Section("Phím cứng & Controls") {
+                                Button("Mở Dev Menu (RN / Flutter)") {
+                                    Task { await viewModel.triggerAndroidDevMenu(avd: avd) }
+                                }
+                                Button("Nhấn phím Home") {
+                                    Task { await viewModel.pressAndroidKey(avd: avd, keyCode: 3, keyName: "Home") }
+                                }
+                                Button("Nhấn phím Back") {
+                                    Task { await viewModel.pressAndroidKey(avd: avd, keyCode: 4, keyName: "Back") }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 3) {
+                                Image(systemName: "wrench.and.screwdriver.fill")
+                                    .font(.system(size: 9.5))
+                                Text("Tiện ích")
+                                    .font(.system(size: 10.5, weight: .medium, design: .rounded))
+                            }
+                        }
+                        .menuStyle(.borderedButton)
+                        .controlSize(.small)
+                        .help("Tiện ích Android: Cài APK, Gửi ảnh, Dev Menu, Xoá Data App")
 
                         Spacer()
                     }

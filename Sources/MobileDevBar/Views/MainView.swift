@@ -345,7 +345,7 @@ public struct MainView: View {
 
             Spacer()
 
-            Text("v1.0.0")
+            Text("v1.1.0")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(.secondary.opacity(0.6))
         }

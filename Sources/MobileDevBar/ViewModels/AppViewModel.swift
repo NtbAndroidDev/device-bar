@@ -202,6 +202,36 @@ public final class AppViewModel: ObservableObject {
         }
     }
 
+    public func promptAndEraseSimulator(_ device: SimulatorDevice) {
+        let alert = NSAlert()
+        alert.messageText = "Xoá Sạch Dữ Liệu Simulator?"
+        alert.informativeText = "Hành động này sẽ tắt máy và xoá toàn bộ dữ liệu, cài đặt của '\(device.name)' về ban đầu. Bạn có chắc chắn muốn xoá?"
+        alert.alertStyle = .critical
+        alert.addButton(withTitle: "Xoá sạch")
+        alert.addButton(withTitle: "Huỷ")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            Task {
+                await eraseSimulator(device)
+            }
+        }
+    }
+
+    public func promptAndWipeAVD(_ avd: AndroidAVD) {
+        let alert = NSAlert()
+        alert.messageText = "Xoá Dữ Liệu & Khởi Động Lại AVD?"
+        alert.informativeText = "Hành động này sẽ xoá sạch bộ nhớ đệm và dữ liệu của '\(avd.name)' về nguyên bản. Bạn có chắc chắn muốn tiếp tục?"
+        alert.alertStyle = .critical
+        alert.addButton(withTitle: "Wipe & Boot")
+        alert.addButton(withTitle: "Huỷ")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            Task {
+                await startAVD(avd, coldBoot: true, wipeData: true)
+            }
+        }
+    }
+
     public func killAllSimulators() async {
         showStatus("Đang tắt toàn bộ Simulators...")
         do {
@@ -448,6 +478,222 @@ public final class AppViewModel: ObservableObject {
             await refreshAll()
         } catch {
             showError("Lỗi ADB Wi-Fi: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Simulator Developer Power Actions
+    public func openSimulatorDataFolder(device: SimulatorDevice) {
+        simService.openSimulatorDataFolder(udid: device.udid)
+        showStatus("Đã mở thư mục Data của Simulator trong Finder")
+    }
+
+    public func openSimulatorAppContainer(device: SimulatorDevice, bundleId: String) async {
+        do {
+            try await simService.openAppContainer(udid: device.udid, bundleId: bundleId)
+            showStatus("Đã mở thư mục App Sandbox trong Finder")
+        } catch {
+            showError(error.localizedDescription)
+        }
+    }
+
+    public func resetSimulatorPrivacy(device: SimulatorDevice) async {
+        do {
+            try await simService.resetPrivacy(udid: device.udid)
+            showStatus("Đã reset toàn bộ quyền (Camera, Photos, Location, Push...)")
+        } catch {
+            showError("Lỗi reset quyền: \(error.localizedDescription)")
+        }
+    }
+
+    public func triggerSimulatorShake(device: SimulatorDevice) async {
+        do {
+            try await simService.triggerShake(udid: device.udid)
+            showStatus("Đã gửi cử chỉ Lắc máy (Shake / Mở Dev Menu)")
+        } catch {
+            showError("Lỗi Shake: \(error.localizedDescription)")
+        }
+    }
+
+    public func sendSimulatorTestPush(device: SimulatorDevice, bundleId: String) async {
+        do {
+            try await simService.sendTestPush(udid: device.udid, bundleId: bundleId.isEmpty ? "com.apple.Preferences" : bundleId)
+            showStatus("Đã gửi Push Notification thử nghiệm!")
+        } catch {
+            showError("Lỗi gửi Push: \(error.localizedDescription)")
+        }
+    }
+
+    public func pickAndAddMediaToSimulator(device: SimulatorDevice) async {
+        let panel = NSOpenPanel()
+        panel.title = "Chọn ảnh hoặc video thêm vào Simulator"
+        panel.allowedContentTypes = [.image, .movie]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        
+        if panel.runModal() == .OK {
+            let urls = panel.urls
+            do {
+                try await simService.addMediaFiles(udid: device.udid, urls: urls)
+                showStatus("Đã thêm \(urls.count) ảnh/video vào Photos của Simulator!")
+            } catch {
+                showError("Lỗi thêm media: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    public func pickAndInstallAppToSimulator(device: SimulatorDevice) async {
+        let panel = NSOpenPanel()
+        panel.title = "Chọn file .app để cài đặt vào Simulator"
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        
+        if panel.runModal() == .OK, let url = panel.url {
+            showStatus("Đang cài đặt app vào Simulator...")
+            do {
+                try await simService.installApp(udid: device.udid, fileURL: url)
+                showStatus("Cài đặt thành công app: \(url.lastPathComponent)")
+            } catch {
+                showError("Lỗi cài đặt app: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    public func syncClipboardFromSimulator(device: SimulatorDevice) async {
+        do {
+            try await simService.syncClipboardSimulatorToMac(udid: device.udid)
+            showStatus("Đã copy nội dung từ Simulator sang Mac Clipboard!")
+        } catch {
+            showError("Lỗi đồng bộ: \(error.localizedDescription)")
+        }
+    }
+
+    public func promptAndOpenAppContainer(device: SimulatorDevice) {
+        let alert = NSAlert()
+        alert.messageText = "Mở Sandbox App trong Finder"
+        alert.informativeText = "Nhập Bundle ID của ứng dụng (ví dụ: com.example.myapp):"
+        alert.addButton(withTitle: "Mở")
+        alert.addButton(withTitle: "Huỷ")
+        
+        let input = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
+        input.placeholderString = "com.company.app"
+        alert.accessoryView = input
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            let bundleId = input.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !bundleId.isEmpty {
+                Task {
+                    await openSimulatorAppContainer(device: device, bundleId: bundleId)
+                }
+            }
+        }
+    }
+
+    public func promptAndSendTestPush(device: SimulatorDevice) {
+        let alert = NSAlert()
+        alert.messageText = "Gửi Push Notification giả lập"
+        alert.informativeText = "Nhập Bundle ID của app để nhận Push (để trống dùng com.apple.Preferences):"
+        alert.addButton(withTitle: "Bắn Push")
+        alert.addButton(withTitle: "Huỷ")
+        
+        let input = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
+        input.placeholderString = "com.company.app"
+        alert.accessoryView = input
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            let bundleId = input.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            Task {
+                await sendSimulatorTestPush(device: device, bundleId: bundleId.isEmpty ? "com.apple.Preferences" : bundleId)
+            }
+        }
+    }
+
+    // MARK: - Android Emulator Power Actions
+    public func triggerAndroidDevMenu(avd: AndroidAVD) async {
+        guard let serial = avd.runningSerial else { return }
+        do {
+            try await androidService.triggerDevMenu(serial: serial)
+            showStatus("Đã gửi lệnh mở Dev Menu (React Native / Flutter)")
+        } catch {
+            showError("Lỗi mở Dev Menu: \(error.localizedDescription)")
+        }
+    }
+
+    public func pressAndroidKey(avd: AndroidAVD, keyCode: Int, keyName: String) async {
+        guard let serial = avd.runningSerial else { return }
+        do {
+            try await androidService.pressKey(serial: serial, keyCode: keyCode)
+            showStatus("Đã nhấn phím \(keyName)")
+        } catch {
+            showError("Lỗi nhấn phím: \(error.localizedDescription)")
+        }
+    }
+
+    public func clearAndroidAppData(avd: AndroidAVD, packageName: String) async {
+        guard let serial = avd.runningSerial else { return }
+        do {
+            try await androidService.clearAppData(serial: serial, packageName: packageName)
+            showStatus("Đã xoá sạch Data & Cache của app \(packageName)")
+        } catch {
+            showError("Lỗi xoá data: \(error.localizedDescription)")
+        }
+    }
+
+    public func promptAndClearAppData(avd: AndroidAVD) {
+        let alert = NSAlert()
+        alert.messageText = "Xoá Dữ Liệu & Cache App"
+        alert.informativeText = "Nhập Package Name của app (ví dụ: com.example.myapp):"
+        alert.addButton(withTitle: "Xoá sạch")
+        alert.addButton(withTitle: "Huỷ")
+        
+        let input = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
+        input.placeholderString = "com.company.app"
+        alert.accessoryView = input
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            let pkg = input.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !pkg.isEmpty {
+                Task {
+                    await clearAndroidAppData(avd: avd, packageName: pkg)
+                }
+            }
+        }
+    }
+
+    public func pickAndInstallApkToAndroid(avd: AndroidAVD) async {
+        guard let serial = avd.runningSerial else { return }
+        let panel = NSOpenPanel()
+        panel.title = "Chọn file APK để cài đặt vào Android Emulator"
+        panel.allowedContentTypes = [.init(filenameExtension: "apk")].compactMap { $0 }
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        
+        if panel.runModal() == .OK, let url = panel.url {
+            showStatus("Đang cài đặt APK \(url.lastPathComponent)...")
+            do {
+                try await androidService.installApk(serial: serial, fileURL: url)
+                showStatus("Cài đặt thành công APK: \(url.lastPathComponent)")
+            } catch {
+                showError("Lỗi cài đặt APK: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    public func pickAndPushMediaToAndroid(avd: AndroidAVD) async {
+        guard let serial = avd.runningSerial else { return }
+        let panel = NSOpenPanel()
+        panel.title = "Chọn ảnh/video gửi vào Android Emulator"
+        panel.allowedContentTypes = [.image, .movie]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        
+        if panel.runModal() == .OK {
+            let urls = panel.urls
+            do {
+                try await androidService.pushMediaFiles(serial: serial, urls: urls)
+                showStatus("Đã gửi \(urls.count) ảnh/video vào Gallery của Emulator!")
+            } catch {
+                showError("Lỗi gửi media: \(error.localizedDescription)")
+            }
         }
     }
 
