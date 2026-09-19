@@ -5,9 +5,10 @@
   <img src="https://img.shields.io/badge/Swift-5.9%2B-orange?style=flat-square&logo=swift" alt="Swift" />
   <img src="https://img.shields.io/badge/Architecture-Universal%20(Apple%20Silicon%20%26%20Intel)-purple?style=flat-square" alt="Architecture" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+  <a href="https://buymeacoffee.com/ntb1nh"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow.svg?style=flat-square&logo=buy-me-a-coffee" alt="Buy Me A Coffee" /></a>
 </p>
 
-> **DeviceBar** is a native macOS Menu Bar application tailored for mobile developers (iOS, Android, Flutter, React Native). It unifies iOS Simulator management, Android AVD controls, real device screen mirroring (`scrcpy`), real-time Network/API inspection with cURL generation, instant crash analysis, multi-language support (English & Vietnamese), and one-click developer cache cleaning (DerivedData, Gradle, SPM).
+> **DeviceBar** is a native macOS Menu Bar application tailored for mobile developers (iOS, Android, Flutter, React Native). It unifies iOS Simulator management, Android AVD controls, real device screen mirroring (`scrcpy`), real-time Network/API inspection with cURL generation, instant crash analysis, multi-language support (English, Tiếng Việt, 日本語, 简体中文, 한국어, Español), and one-click developer cache cleaning (DerivedData, Gradle, SPM).
 
 <p align="center">
   <img src="assets/devicebar_preview.png" alt="DeviceBar - macOS Menu Bar Mobile Developer Companion" width="800" />
@@ -109,7 +110,13 @@
 ---
 
 ### 7. 🌍 Multi-Language & Preferences (v1.2.0)
-* **Instant Hot-Switch Language:** Switch between **English 🇺🇸** and **Tiếng Việt 🇻🇳** with a single click right on the Header Bar (`[🇻🇳 VI] / [🇺🇸 EN]`) without restarting the app.
+* **Instant Hot-Switch Language:** Switch smoothly between **6 global developer languages** right from the Header Bar dropdown (`[🇺🇸 EN]`, `[🇻🇳 VI]`, `[🇯🇵 JA]`, `[🇨🇳 ZH]`, `[🇰🇷 KO]`, `[🇪🇸 ES]`) or Preferences tab without restarting the app.
+  * 🇺🇸 **English**
+  * 🇻🇳 **Tiếng Việt**
+  * 🇯🇵 **日本語** (Japanese)
+  * 🇨🇳 **简体中文** (Simplified Chinese)
+  * 🇰🇷 **한국어** (Korean)
+  * 🇪🇸 **Español** (Spanish)
 * **Comprehensive Settings:**
   * Toggle **Launch at Login** via macOS `SMAppService`.
   * Configurable **Background Refresh Rate** (1.5s Fast, 3s Standard, 6s Low Battery, or Manual).
@@ -164,5 +171,18 @@ open /Applications/DeviceBar.app
 
 ---
 
+## ☕ Support the Project
+
+If you find **DeviceBar** helpful for your daily mobile development workflow, feel free to support the developer!
+
+<p align="left">
+  <a href="https://buymeacoffee.com/ntb1nh" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="42" />
+  </a>
+</p>
+
+---
+
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE).
+

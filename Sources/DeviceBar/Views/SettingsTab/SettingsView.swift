@@ -57,35 +57,37 @@ public struct SettingsView: View {
                 Spacer()
             }
 
-            HStack(spacing: 8) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 6) {
                 ForEach(AppLanguage.allCases) { lang in
                     let isSelected = langManager.currentLanguage == lang
                     Button {
                         langManager.setLanguage(lang)
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 5) {
                             Text(lang.flag)
-                                .font(.system(size: 14))
+                                .font(.system(size: 13))
                             Text(lang.displayName)
-                                .font(.system(size: 11.5, weight: isSelected ? .semibold : .medium, design: .rounded))
+                                .font(.system(size: 11, weight: isSelected ? .semibold : .medium, design: .rounded))
+                                .lineLimit(1)
                         }
                         .foregroundColor(isSelected ? .white : .primary)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 7)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 4)
                         .background(
                             ZStack {
                                 if isSelected {
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    RoundedRectangle(cornerRadius: 7, style: .continuous)
                                         .fill(AppTheme.primaryGradient)
-                                        .shadow(color: Color(hex: "3B82F6").opacity(0.3), radius: 4, y: 2)
+                                        .shadow(color: Color(hex: "3B82F6").opacity(0.3), radius: 3, y: 1.5)
                                 } else {
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    RoundedRectangle(cornerRadius: 7, style: .continuous)
                                         .fill(Color.primary.opacity(0.04))
                                 }
                             }
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            RoundedRectangle(cornerRadius: 7, style: .continuous)
                                 .strokeBorder(isSelected ? Color.clear : Color.primary.opacity(0.08), lineWidth: 0.5)
                         )
                     }
@@ -376,23 +378,45 @@ public struct SettingsView: View {
 
                 Spacer()
 
-                Button {
-                    if let url = URL(string: "https://github.com/NtbAndroidDev/device-bar") {
-                        NSWorkspace.shared.open(url)
+                HStack(spacing: 6) {
+                    Button {
+                        if let url = URL(string: "https://buymeacoffee.com/ntb1nh") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("☕")
+                                .font(.system(size: 10))
+                            Text(loc("buy_me_a_coffee"))
+                                .font(.system(size: 10.5, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(Color(hex: "D97706"))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(hex: "F59E0B").opacity(0.12))
+                        .clipShape(Capsule())
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "link")
-                            .font(.system(size: 10))
-                        Text("GitHub")
-                            .font(.system(size: 10.5, weight: .semibold, design: .rounded))
+                    .buttonStyle(.plain)
+                    .help("https://buymeacoffee.com/ntb1nh")
+
+                    Button {
+                        if let url = URL(string: "https://github.com/NtbAndroidDev/device-bar") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "link")
+                                .font(.system(size: 10))
+                            Text("GitHub")
+                                .font(.system(size: 10.5, weight: .semibold, design: .rounded))
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.primary.opacity(0.06))
+                        .clipShape(Capsule())
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.primary.opacity(0.06))
-                    .clipShape(Capsule())
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
 
             Divider().opacity(0.3)

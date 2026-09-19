@@ -150,25 +150,38 @@ public struct MainView: View {
 
             Spacer()
 
-            // Quick Language Switch Button
-            Button {
-                let nextLang: AppLanguage = langManager.currentLanguage == .vietnamese ? .english : .vietnamese
-                langManager.setLanguage(nextLang)
+            // Quick Language Switch Menu
+            Menu {
+                ForEach(AppLanguage.allCases) { lang in
+                    Button {
+                        langManager.setLanguage(lang)
+                    } label: {
+                        HStack {
+                            Text("\(lang.flag) \(lang.displayName)")
+                            if langManager.currentLanguage == lang {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
             } label: {
                 HStack(spacing: 3) {
                     Text(langManager.currentLanguage.flag)
                         .font(.system(size: 11))
-                    Text(langManager.currentLanguage == .vietnamese ? "VI" : "EN")
+                    Text(langManager.currentLanguage.code)
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 7, weight: .bold))
+                        .foregroundColor(.secondary)
                 }
                 .padding(.horizontal, 6)
                 .padding(.vertical, 3.5)
                 .background(Color.primary.opacity(0.06))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
-            .help(langManager.currentLanguage == .vietnamese ? "Chuyển sang English" : "Switch to Tiếng Việt")
+            .menuStyle(.borderlessButton)
+            .help(loc("language"))
 
             // Refresh Button with smooth rotation
             Button {
@@ -349,6 +362,26 @@ public struct MainView: View {
             }
 
             Spacer()
+
+            Button {
+                if let url = URL(string: "https://buymeacoffee.com/ntb1nh") {
+                    NSWorkspace.shared.open(url)
+                }
+            } label: {
+                HStack(spacing: 3) {
+                    Text("☕")
+                        .font(.system(size: 9.5))
+                    Text(loc("buy_me_a_coffee"))
+                        .font(.system(size: 9.5, weight: .medium, design: .rounded))
+                }
+                .foregroundColor(Color(hex: "D97706"))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color(hex: "F59E0B").opacity(0.12))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .help("https://buymeacoffee.com/ntb1nh")
 
             Text("v1.2.0")
                 .font(.system(size: 10, design: .monospaced))
