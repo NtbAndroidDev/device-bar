@@ -7,7 +7,11 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
-> **DeviceBar** is a native macOS Menu Bar application tailored for mobile developers (iOS, Android, Flutter, React Native). It unifies iOS Simulator management, Android AVD controls, real device screen mirroring (`scrcpy`), real-time Network/API inspection with cURL generation, instant crash analysis, and one-click developer cache cleaning (DerivedData, Gradle, SPM).
+> **DeviceBar** is a native macOS Menu Bar application tailored for mobile developers (iOS, Android, Flutter, React Native). It unifies iOS Simulator management, Android AVD controls, real device screen mirroring (`scrcpy`), real-time Network/API inspection with cURL generation, instant crash analysis, multi-language support (English & Vietnamese), and one-click developer cache cleaning (DerivedData, Gradle, SPM).
+
+<p align="center">
+  <img src="assets/devicebar_preview.png" alt="DeviceBar - macOS Menu Bar Mobile Developer Companion" width="800" />
+</p>
 
 ---
 
@@ -54,6 +58,11 @@
 ---
 
 ### 3. 🌐 Network & API Inspector (cURL & Markdown Export)
+
+<p align="center">
+  <img src="assets/network_inspector.png" alt="DeviceBar - Network & API Traffic Inspector" width="800" />
+</p>
+
 * **Real-time Master-Detail Inspector:** Observe live API traffic from both iOS Simulators and Android Emulators without modifying client code.
 * **Automatic Protocol Parsing:** Compatible with **OkHttp, Retrofit, Dio (Flutter), URLSession, Axios**.
 * **Smart Filter:** 
@@ -99,7 +108,17 @@
 
 ---
 
-### 7. ⌨️ macOS Native Experience & Shortcuts
+### 7. 🌍 Multi-Language & Preferences (v1.2.0)
+* **Instant Hot-Switch Language:** Switch between **English 🇺🇸** and **Tiếng Việt 🇻🇳** with a single click right on the Header Bar (`[🇻🇳 VI] / [🇺🇸 EN]`) without restarting the app.
+* **Comprehensive Settings:**
+  * Toggle **Launch at Login** via macOS `SMAppService`.
+  * Configurable **Background Refresh Rate** (1.5s Fast, 3s Standard, 6s Low Battery, or Manual).
+  * **Developer Environment Diagnostics:** Real-time status checks for Xcode CLT (`xcrun simctl`), Android SDK/ADB, and `scrcpy`.
+  * **Network Inspector Buffer:** Configurable buffer capacity (50, 100, 200, 500 items) and clear history.
+
+---
+
+### 8. ⌨️ macOS Native Experience & Shortcuts
 * Built with 100% native SwiftUI and AppKit.
 * Runs purely in the Menu Bar (`LSUIElement = true`) with zero Dock clutter.
 * Dynamic menu bar badge displaying active booted device count.
@@ -107,6 +126,7 @@
   * <kbd>⌘1</kbd>: Simulators & AVD Tab
   * <kbd>⌘2</kbd>: Physical Devices & Mirroring Tab
   * <kbd>⌘3</kbd>: Quick Tools & Storage Cleaner Tab
+  * <kbd>⌘4</kbd>: Settings & Preferences Tab
   * <kbd>⌘F</kbd>: Quick Search Filter
   * <kbd>⌘R</kbd>: Refresh System State
 
@@ -117,7 +137,8 @@
 ### Requirements
 * macOS 13.0 (Ventura) or later.
 * Xcode Command Line Tools (`xcode-select --install`).
-* *(Optional for screen mirroring):* `brew install scrcpy`
+* *(Optional for Android mirroring):* `brew install scrcpy`
+* *(Optional for physical iPhone capture):* `brew install libimobiledevice`
 
 ### Build from Source
 ```bash
@@ -137,7 +158,7 @@ open /Applications/DeviceBar.app
 
 ### Package into `.dmg` Installer
 ```bash
-# Generates a standalone DeviceBar-v1.1.0.dmg installer
+# Generates a standalone DeviceBar-v1.2.0.dmg installer
 ./create_dmg.sh
 ```
 
